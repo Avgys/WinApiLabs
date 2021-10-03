@@ -1,5 +1,0 @@
-﻿  EntryPoint.cpp
-C:\Users\ilyuh\Desktop\WinApi\example2\CoolPiano\EntryPoint.cpp(61,17): warning C4804: -: небезопасное использование типа "bool" в операции
-C:\Users\ilyuh\Desktop\WinApi\example2\CoolPiano\EntryPoint.cpp(61,63): warning C4804: -: небезопасное использование типа "bool" в операции
-C:\Users\ilyuh\Desktop\WinApi\example2\CoolPiano\EntryPoint.cpp(77,10): warning C4101: strCode: неиспользованная локальная переменная
-  CoolPiano.vcxproj -> C:\Users\ilyuh\Desktop\WinApi\example2\Debug\CoolPiano.exe
