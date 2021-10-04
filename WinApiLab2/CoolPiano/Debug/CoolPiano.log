@@ -1,9 +1,0 @@
-﻿  EntryPoint.cpp
-C:\Users\ilyuh\Desktop\WinApi\WinApiLabs\WinApiLab2\CoolPiano\EntryPoint.cpp(30,10): warning C4101: strCode: неиспользованная локальная переменная
-C:\Users\ilyuh\Desktop\WinApi\WinApiLabs\WinApiLab2\CoolPiano\EntryPoint.cpp(216,39): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
-C:\Users\ilyuh\Desktop\WinApi\WinApiLabs\WinApiLab2\CoolPiano\EntryPoint.cpp(216,30): warning C4244: =: преобразование "int" в "float", возможна потеря данных
-C:\Users\ilyuh\Desktop\WinApi\WinApiLabs\WinApiLab2\CoolPiano\EntryPoint.cpp(224,46): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
-C:\Users\ilyuh\Desktop\WinApi\WinApiLabs\WinApiLab2\CoolPiano\EntryPoint.cpp(224,35): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
-C:\Users\ilyuh\Desktop\WinApi\WinApiLabs\WinApiLab2\CoolPiano\EntryPoint.cpp(224,29): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
-C:\Users\ilyuh\Desktop\WinApi\WinApiLabs\WinApiLab2\CoolPiano\EntryPoint.cpp(224,23): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
-  CoolPiano.vcxproj -> C:\Users\ilyuh\Desktop\WinApi\WinApiLabs\WinApiLab2\Debug\CoolPiano.exe
