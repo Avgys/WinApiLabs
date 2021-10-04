@@ -19,7 +19,7 @@ int columnCount = 5;
 string** stringMatrix;
 
 void CreateStringMatrix();
-void DrawTable(HDC hdc, RECT rect, int borderSize);
+void DrawTable(HDC hDC, RECT rect, int borderSize);
 
 LRESULT WINAPI WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -32,7 +32,7 @@ LRESULT WINAPI WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	switch (uMsg)
 	{
 	case WM_CREATE:
-		GetClientRect(hWnd, &windowRect);				
+		GetClientRect(hWnd, &windowRect);
 		break;
 
 	case WM_DESTROY:
@@ -44,11 +44,11 @@ LRESULT WINAPI WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		break;
 
 	case WM_PAINT:
-		hDC = BeginPaint(hWnd, &ps);	
+		hDC = BeginPaint(hWnd, &ps);
 		DrawTable(hDC, windowRect, 3);
 		EndPaint(hWnd, &ps);
 		break;
-	}	
+	}
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
@@ -115,7 +115,7 @@ void CreateStringMatrix() {
 
 	int quantityOfCharInCell = (int)len / (columnCount * rowCount);
 	int charactersLeft = len % (columnCount * rowCount);
-	
+
 	int currentOffset = 0;
 
 	for (int i = 0; i < rowCount; i++)
@@ -177,40 +177,61 @@ void DrawTextBlock(HDC hdc, int left, int top, int width, int height, int row, i
 {
 	RECT rect;
 	rect.top = (long)(top + borderSize);
+	//rect.top = (long)(100);
 	rect.left = (long)(left + borderSize);
+	//rect.left = (long)(100);
 	rect.right = (long)(left + width - borderSize);
+	//rect.right = (long)(left + width);
 	rect.bottom = (long)(top + height - borderSize);
-	
+	//rect.bottom = (long)(top + height);
+
 	std::wstring widestr = std::wstring(stringMatrix[row][column].begin(), stringMatrix[row][column].end());
 
-	DrawText(hdc, widestr.c_str(),stringMatrix[row][column].length(), &rect, DT_WORDBREAK | DT_EDITCONTROL | DT_CENTER);
+	DrawText(hdc, widestr.c_str(), stringMatrix[row][column].length(), &rect, DT_WORDBREAK | DT_EDITCONTROL | DT_CENTER);
 }
 
-void DrawTable(HDC hdc, RECT rect, int borderSize)
+HFONT generateFont()
+{
+	int fnWeight = 400;
+
+	HFONT hFont = CreateFont(20, 7, 0, 0, fnWeight, FALSE, FALSE, FALSE, ANSI_CHARSET, OUT_OUTLINE_PRECIS,
+		CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, VARIABLE_PITCH, TEXT("Times New Roman"));
+
+	return hFont;
+}
+
+void DrawTable(HDC hDC, RECT rect, int borderSize)
 {
 	float posX, posY = 0;
 	float cellWidth = (float)rect.right / columnCount;
 	float cellHeight = 0;
 
+	HFONT hFont = generateFont();
+	SelectObject(hDC, hFont);
+
+
+	//DrawTextBlock(hDC, 80, 80, rect.right, rect.bottom, 1, 1, borderSize);
 	for (int i = 0; i < rowCount; i++)
 	{
-		cellHeight = GetBlockHeight(hdc, i, cellWidth);
+		cellHeight = GetBlockHeight(hDC, i, cellWidth);
 		posX = 0;
 		for (int j = 0; j < columnCount; j++)
 		{
 			//hFont = generateFont();
-			//SelectObject(hdc, hFont);
+			//SelectObject(hDC, hFont);
 
-			DrawLine(hdc, (int)posX, (int)posY, (int)posX, (int)(posY + cellHeight));
-			DrawTextBlock(hdc, posX, posY, cellWidth, cellHeight, i, j, borderSize);
+			DrawLine(hDC, (int)posX, (int)posY, (int)posX, (int)(posY + cellHeight));
+			DrawTextBlock(hDC, posX, posY, cellWidth, cellHeight, i, j, borderSize);
 			posX += cellWidth;
 
 			//DeleteObject(hFont);
 		}
 
-		DrawLine(hdc, (int)(posX - 1), (int)posY, (int)(posX - 1), (int)(posY + cellHeight));
-		DrawLine(hdc, 0, (int)posY, rect.right, (int)posY);
+		DrawLine(hDC, (int)(posX - 1), (int)posY, (int)(posX - 1), (int)(posY + cellHeight));
+		DrawLine(hDC, 0, (int)posY, rect.right, (int)posY);
 		posY += cellHeight;
 	}
-	DrawLine(hdc, 0, (int)posY, rect.right, (int)posY);	
+
+	DeleteObject(hFont);
+	DrawLine(hDC, 0, (int)posY, rect.right, (int)posY);
 }
