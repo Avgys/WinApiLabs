@@ -8,27 +8,32 @@
 #define DLL_EXPORT
 
 #include "dll.h"
-//
-//BOOL APIENTRY DllMain( HMODULE hModule,
-//                       DWORD  ul_reason_for_call,
-//                       LPVOID lpReserved
-//                     )
-//{
-//    switch (ul_reason_for_call)
-//    {
-//    case DLL_PROCESS_ATTACH:        
-//    case DLL_THREAD_ATTACH:
-//    case DLL_THREAD_DETACH:
-//    case DLL_PROCESS_DETACH:
-//        break;
-//    }
-//    return TRUE;
-//}
+
+BOOL APIENTRY DllMain( HMODULE hModule,
+                       DWORD  ul_reason_for_call,
+                       LPVOID lpReserved
+                     )
+{
+    switch (ul_reason_for_call)
+    {
+    case DLL_PROCESS_ATTACH:        
+    case DLL_THREAD_ATTACH:
+		MessageBox(NULL, L"You cracked", NULL, MB_OK);
+    case DLL_THREAD_DETACH:
+		MessageBox(NULL, L"By", NULL, MB_OK);
+    case DLL_PROCESS_DETACH:
+        break;
+    }
+    return TRUE;
+}
 
 //DLL_API void ProccessMain(char* strToFind, char* strToReplace);
 
 DLL_API void ProccessMain(char* strToFind, char* strToReplace) {
-
+	char str_test[12] = "To Find";
+	char str_rep[12] = "To Replace";
+	strToFind = str_test;
+	strToReplace = str_rep;
 	SYSTEM_INFO sysInfo;
 	GetSystemInfo(&sysInfo);
 	//sysInfo.

@@ -10,7 +10,6 @@ int main()
     char str_rep[12] = "To Replace";
     const WCHAR* lpFileName = L"C:\\Users\\ilyuh\\Desktop\\WinApi\\WinApiLabs\\WinApiLab3\\dll\\Debug\\dll.dll";
     HMODULE lib = LoadLibrary(lpFileName);
-
     if (lib == NULL) {
         const DWORD errorCode = GetLastError();
         return errorCode;

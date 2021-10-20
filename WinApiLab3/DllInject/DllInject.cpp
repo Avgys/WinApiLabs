@@ -7,7 +7,7 @@ bool InjectDll(int pId, LPCSTR szDllPath);
 
 int main()
 {
-	if (!InjectDll(5304, "C:\\a.dll")) {
+	if (!InjectDll(15400, "C:\\Users\\ilyuh\\Desktop\\WinApi\\WinApiLabs\\WinApiLab3\\dll\\Debug\\dll.dll")) {
 		return GetLastError();
 	}
 	return 0;
@@ -68,7 +68,7 @@ bool InjectDll(int pId, LPCSTR szDllPath) {
 
 	if (!CreateRemoteThread(hProcess, NULL, 0, pThreadProc, pRemoteBuf, 0, NULL)) // Выполнение удаленного потока
 	{
-		std::cout << (L"InjectDll() : MyCreateRemoteThread() failed!!!\n");
+		std::cout << (L"InjectDll() : MyCreateRemoteThread() failed!!!\n", GetLastError());
 
 		return false;
 	}
