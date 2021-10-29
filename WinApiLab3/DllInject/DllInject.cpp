@@ -1,21 +1,20 @@
-﻿
-#include <iostream>
+﻿#include <iostream>
 #include <Windows.h>
-
+#include <tlhelp32.h>
+#include <thread>
+#include <chrono>
+using namespace std::chrono_literals;
 
 bool InjectDll(int pId, LPCSTR szDllPath);
+HANDLE GetProcessByName(PCWSTR name);
 
 int main()
 {
-	if (!InjectDll(15400, "C:\\Users\\ilyuh\\Desktop\\WinApi\\WinApiLabs\\WinApiLab3\\dll\\Debug\\dll.dll")) {
+	
+	if (!InjectDll(GetProcessId(GetProcessByName(L"Project1.exe")), "C:\\Users\\ilyuh\\Desktop\\WinApi\\WinApiLabs\\WinApiLab3\\dll\\Debug\\dll.dll")) {
 		return GetLastError();
 	}
 	return 0;
-	//LoadLibrary
-		/*Proccess
-		VirtualAllocEx
-		WriteProcessMemory
-	CreateRemoteThread();*/
 }
 
 bool InjectDll(int pId, LPCSTR szDllPath) {
@@ -73,10 +72,44 @@ bool InjectDll(int pId, LPCSTR szDllPath) {
 		return false;
 	}
 
+	std::this_thread::sleep_for(1s);
 	if (pRemoteBuf)
 		VirtualFreeEx(hProcess, pRemoteBuf, 0, MEM_RELEASE);
 	if (hProcess)
 		CloseHandle(hProcess);
 
 	return true;
+}
+
+HANDLE GetProcessByName(PCWSTR name)
+{
+	DWORD pid = 0;
+
+	// Create toolhelp snapshot.
+	HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+	PROCESSENTRY32 process;
+	ZeroMemory(&process, sizeof(process));
+	process.dwSize = sizeof(process);
+
+	// Walkthrough all processes.
+	if (Process32First(snapshot, &process))
+	{
+		do
+		{
+			if (std::wstring(process.szExeFile) == std::wstring(name))
+			{
+				pid = process.th32ProcessID;
+				break;
+			}
+		} while (Process32Next(snapshot, &process));
+	}
+
+	CloseHandle(snapshot);
+
+	if (pid != 0)
+	{
+		return OpenProcess(PROCESS_ALL_ACCESS, FALSE, pid);
+	}
+
+	return NULL;
 }

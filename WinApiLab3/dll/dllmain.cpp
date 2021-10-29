@@ -2,7 +2,7 @@
 #include "pch.h"
 #include <sysinfoapi.h>
 #include <vector>
-#include <string.h>
+#include <string>
 #include <iostream>
 
 #define DLL_EXPORT
@@ -14,56 +14,50 @@ BOOL APIENTRY DllMain( HMODULE hModule,
                        LPVOID lpReserved
                      )
 {
+	char str_test[] = "stroka";
+	char str_rep[] = "abcdef";
     switch (ul_reason_for_call)
     {
-    case DLL_PROCESS_ATTACH:        
-    case DLL_THREAD_ATTACH:
-		MessageBox(NULL, L"You cracked", NULL, MB_OK);
-    case DLL_THREAD_DETACH:
-		MessageBox(NULL, L"By", NULL, MB_OK);
-    case DLL_PROCESS_DETACH:
-        break;
+		case DLL_PROCESS_ATTACH: {
+			ProccessMain(str_test, str_rep);
+			MessageBox(NULL, L"You cracked", NULL, MB_OK);
+			break;
+		}
+		case DLL_THREAD_ATTACH: {
+				break;
+			}
+		case DLL_THREAD_DETACH: {
+			break; 
+		}
+		case DLL_PROCESS_DETACH: {
+			MessageBox(NULL, L"By", NULL, MB_OK);
+			break;
+		}
     }
     return TRUE;
 }
 
-//DLL_API void ProccessMain(char* strToFind, char* strToReplace);
-
-DLL_API void ProccessMain(char* strToFind, char* strToReplace) {
-	char str_test[12] = "To Find";
-	char str_rep[12] = "To Replace";
-	strToFind = str_test;
-	strToReplace = str_rep;
+DLL_API void ProccessMain(char* strToFind, char* strToReplace) 
+{	
 	SYSTEM_INFO sysInfo;
 	GetSystemInfo(&sysInfo);
-	//sysInfo.
 	void* min = sysInfo.lpMinimumApplicationAddress;
 	void* max = sysInfo.lpMaximumApplicationAddress;
 	void* regionAddr = min;
+
+	MessageBox(NULL, L"Work", NULL, MB_OK);
 	HANDLE currProc = GetCurrentProcess();
 	MEMORY_BASIC_INFORMATION infoBuffer;
 	while ((regionAddr < max) && VirtualQuery(regionAddr, &infoBuffer, sizeof(infoBuffer))) {
-
-		std::vector<char> tempBuffer;
 		if (infoBuffer.State == MEM_COMMIT && (infoBuffer.Protect == PAGE_READWRITE || infoBuffer.Protect == PAGE_EXECUTE_READWRITE)) {
-
 			SIZE_T bytesRead;
-
-			tempBuffer.resize(infoBuffer.RegionSize);
-			ReadProcessMemory(currProc, regionAddr, &tempBuffer[0], infoBuffer.RegionSize, &bytesRead);
-			tempBuffer.resize(bytesRead);
+			char* ptr = (char*)regionAddr;
 			int currAddr = (int)regionAddr;
-			for (auto j = 0; j < tempBuffer.size(); j++) {
-				if (tempBuffer[j] == strToFind[0]) {
-					int i = 0;
-					while (tempBuffer[j + i] == strToFind[i] && (i < strlen(strToFind))) {
-						i++;
-					}
-					if (i == strlen(strToFind)) {
-						if (WriteProcessMemory(currProc, (LPVOID)((unsigned int)regionAddr + j), strToReplace, strlen(strToReplace) + 1, NULL)) {
-							//char Buffer[100];
-							std::cout << "Replaced" << std::endl;	
-							ReadProcessMemory(currProc, (LPVOID)((unsigned int)regionAddr + j), &tempBuffer[0], infoBuffer.RegionSize, &bytesRead);
+			for (auto j = 0; j < infoBuffer.RegionSize; j++) {
+				if (ptr[j] == strToFind[0]) {
+					if (strcmp(ptr + j, strToFind) == 0) {
+						if (WriteProcessMemory(currProc, (LPVOID)((std::uint64_t)ptr + j), strToReplace, strlen(strToReplace) + 1, NULL)) {
+							std::cout << "Replaced:" << (std::uint64_t)ptr + j << std::endl;
 						}
 					}
 				}
