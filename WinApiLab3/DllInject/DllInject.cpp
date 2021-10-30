@@ -11,7 +11,7 @@ HANDLE GetProcessByName(PCWSTR name);
 int main()
 {
 	
-	if (!InjectDll(GetProcessId(GetProcessByName(L"Project1.exe")), "C:\\Users\\ilyuh\\Desktop\\WinApi\\WinApiLabs\\WinApiLab3\\dll\\Debug\\dll.dll")) {
+	if (!InjectDll(GetProcessId(GetProcessByName(L"Project1.exe")), "C:\\Users\\ilyuh\\Desktop\\WinApi\\WinApiLabs\\WinApiLab3\\dll\\x64\\Debug\\injectdll.dll")) {
 		return GetLastError();
 	}
 	return 0;
@@ -20,18 +20,18 @@ int main()
 bool InjectDll(int pId, LPCSTR szDllPath) {
 	HANDLE hProcess = NULL;
 	LPVOID pRemoteBuf = NULL;
-	int dwBufSize = (strlen(szDllPath) + 1) * sizeof(TCHAR); // Размер открытой памяти
+	int dwBufSize = (strlen(szDllPath) + 1) * sizeof(TCHAR);
 	LPTHREAD_START_ROUTINE pThreadProc = NULL;
 	HMODULE hMod = NULL;
 
-	if (!(hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, pId))) // Открываем целевой процесс и получаем дескриптор
+	if (!(hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, pId)))
 	{
 		std::cout << (L"InjectDll() : OpenProcess(%d) failed!!! [%d]\n",
 			pId, GetLastError());
 		return false;
 	}
 
-	pRemoteBuf = VirtualAllocEx(hProcess, NULL, dwBufSize, MEM_COMMIT, PAGE_READWRITE); // Открываем часть памяти в пространстве целевого процесса
+	pRemoteBuf = VirtualAllocEx(hProcess, NULL, dwBufSize, MEM_COMMIT, PAGE_READWRITE);
 	
 	if (pRemoteBuf == NULL)
 	{
@@ -40,14 +40,14 @@ bool InjectDll(int pId, LPCSTR szDllPath) {
 		return false;
 	}
 
-	if (!WriteProcessMemory(hProcess, pRemoteBuf, (LPVOID)szDllPath, dwBufSize, NULL)) // Копируем путь к dll в открытую память
+	if (!WriteProcessMemory(hProcess, pRemoteBuf, (LPVOID)szDllPath, dwBufSize, NULL)) 
 	{
 		std::cout << (L"InjectDll() : WriteProcessMemory() failed!!! [%d]\n",
 			GetLastError());
 		return false;
 	}
 
-	hMod = GetModuleHandle(L"kernel32.dll"); // Получаем дескриптор модуля этого процесса kernel32.dll
+	hMod = GetModuleHandle(L"kernel32.dll"); 
 
 	if (hMod == NULL)
 	{
@@ -56,7 +56,7 @@ bool InjectDll(int pId, LPCSTR szDllPath) {
 		return false;
 	}
 
-	pThreadProc = (LPTHREAD_START_ROUTINE)GetProcAddress(hMod, "LoadLibraryA"); // Получить начальный адрес функции LoadLibraryW
+	pThreadProc = (LPTHREAD_START_ROUTINE)GetProcAddress(hMod, "LoadLibraryA"); 
 
 	if (pThreadProc == NULL)
 	{
@@ -65,7 +65,7 @@ bool InjectDll(int pId, LPCSTR szDllPath) {
 		return false;
 	}
 
-	if (!CreateRemoteThread(hProcess, NULL, 0, pThreadProc, pRemoteBuf, 0, NULL)) // Выполнение удаленного потока
+	if (!CreateRemoteThread(hProcess, NULL, 0, pThreadProc, pRemoteBuf, 0, NULL)) 
 	{
 		std::cout << (L"InjectDll() : MyCreateRemoteThread() failed!!!\n", GetLastError());
 

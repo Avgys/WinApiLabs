@@ -1,12 +1,15 @@
-﻿
+﻿#include <Windows.h>
 #include <iostream>
 #include "../dll/dll.h"
 //#pragma comment(lib,"../dll/dll.h")
 
 int main(){
    
-    char str_test[12] = "To Find";
+    const char* strToFind = "To Find str";
+    char str_test[] = "To Find str";
     char str_rep[12] = "To Replace";
-    
-    ProccessMain(str_test, str_rep);
+    std::cout << str_test << " " << (SIZE_T)&str_test << std::endl;
+    ProccessMain(strToFind, str_rep);
+
+    std::cout << str_test << std::endl;
 }

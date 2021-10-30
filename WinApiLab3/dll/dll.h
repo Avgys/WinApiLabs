@@ -6,4 +6,4 @@
 #define DLL_API __declspec(dllimport)
 #endif
 
-extern "C" { DLL_API void ProccessMain(char* strToFind, char* strToReplace); }
+extern "C" { DLL_API void ProccessMain(const char* strToFind, char* strToReplace); }

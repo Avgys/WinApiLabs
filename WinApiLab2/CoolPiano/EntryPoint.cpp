@@ -20,6 +20,7 @@ int rowCount = 10;
 int columnCount = 5;
 string** stringMatrix;
 int tableHeight;
+int FontHeight = 20;
 
 void CreateStringMatrix();
 void DrawTable(HDC hDC, RECT rect, int borderSize);
@@ -41,6 +42,23 @@ LRESULT WINAPI WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 	case WM_DESTROY:
 		PostQuitMessage(0);
+		break;
+	case WM_MOUSEWHEEL:
+		
+		zDelta = GET_WHEEL_DELTA_WPARAM(wParam);
+		switch (GET_KEYSTATE_WPARAM(wParam)) {
+		case MK_SHIFT:
+			
+		default:
+			if (zDelta > 0) {
+				FontHeight++;
+			}
+			else {
+				FontHeight--;
+			}
+			break;
+		}
+		InvalidateRect(hWnd, NULL, TRUE);
 		break;
 	case WM_SIZE:
 		GetClientRect(hWnd, &windowRect);
@@ -216,7 +234,7 @@ HFONT generateFont(int angle = 0)
 {
 	int fnWeight = 400;
 
-	HFONT hFont = CreateFont(20, 7, angle, 0, fnWeight, FALSE, FALSE, FALSE, ANSI_CHARSET, OUT_OUTLINE_PRECIS,
+	HFONT hFont = CreateFont(FontHeight, 7, angle, 0, fnWeight, FALSE, FALSE, FALSE, ANSI_CHARSET, OUT_OUTLINE_PRECIS,
 		CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, VARIABLE_PITCH, TEXT("Times New Roman"));
 
 	return hFont;
@@ -266,12 +284,12 @@ void DrawCycle(HDC hDC, RECT rect)
 	float posX = rect.right / 2, posY = tableHeight + (rect.bottom - tableHeight) / 2;
 
 	string word = stringMatrix[0][0];
+
 	//string word = "word";
 
 	double anglePerChar = 360 / word.length();
 
 	std::wstring widestr = std::wstring(word.begin(), word.end());
-	//DrawTextBlock(hDC, 80, 80, rect.right, rect.bottom, 1, 1, borderSize);
 
 	int cellHeight = GetWordHeight(hDC, word, 100);
 	int x = 0, y = 0, R = 100;

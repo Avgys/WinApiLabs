@@ -14,13 +14,14 @@ BOOL APIENTRY DllMain( HMODULE hModule,
                        LPVOID lpReserved
                      )
 {
+	/*const char* strToFind = "stroka";
 	char str_test[] = "stroka";
-	char str_rep[] = "abcdef";
+	char str_rep[] = "abcdef";*/
     switch (ul_reason_for_call)
     {
 		case DLL_PROCESS_ATTACH: {
-			ProccessMain(str_test, str_rep);
-			MessageBox(NULL, L"You cracked", NULL, MB_OK);
+		/*	MessageBox(NULL, L"You cracked", NULL, MB_OK);
+			ProccessMain(str_test, str_rep);*/
 			break;
 		}
 		case DLL_THREAD_ATTACH: {
@@ -30,14 +31,14 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 			break; 
 		}
 		case DLL_PROCESS_DETACH: {
-			MessageBox(NULL, L"By", NULL, MB_OK);
+			//MessageBox(NULL, L"Bye", NULL, MB_OK);
 			break;
 		}
     }
     return TRUE;
 }
 
-DLL_API void ProccessMain(char* strToFind, char* strToReplace) 
+DLL_API void ProccessMain(const char* strToFind, char* strToReplace) 
 {	
 	SYSTEM_INFO sysInfo;
 	GetSystemInfo(&sysInfo);
@@ -45,14 +46,12 @@ DLL_API void ProccessMain(char* strToFind, char* strToReplace)
 	void* max = sysInfo.lpMaximumApplicationAddress;
 	void* regionAddr = min;
 
-	MessageBox(NULL, L"Work", NULL, MB_OK);
+	//MessageBox(NULL, L"Work", NULL, MB_OK);
 	HANDLE currProc = GetCurrentProcess();
 	MEMORY_BASIC_INFORMATION infoBuffer;
 	while ((regionAddr < max) && VirtualQuery(regionAddr, &infoBuffer, sizeof(infoBuffer))) {
-		if (infoBuffer.State == MEM_COMMIT && (infoBuffer.Protect == PAGE_READWRITE || infoBuffer.Protect == PAGE_EXECUTE_READWRITE)) {
-			SIZE_T bytesRead;
+		if (infoBuffer.State == MEM_COMMIT && (infoBuffer.Protect == PAGE_READWRITE || infoBuffer.Protect == PAGE_EXECUTE_READWRITE)) {			
 			char* ptr = (char*)regionAddr;
-			int currAddr = (int)regionAddr;
 			for (auto j = 0; j < infoBuffer.RegionSize; j++) {
 				if (ptr[j] == strToFind[0]) {
 					if (strcmp(ptr + j, strToFind) == 0) {
